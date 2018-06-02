@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>商品详情页</title>
+</head>
+<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+
+<body>
+	
+	商品名称：蛋糕<br/>
+	商品价格：￥25<br/>
+	<input type="button" value="购买" onclick="buy()"/>
+	
+<script type="text/javascript">
+
+	$(function(){
+		
+		//保证支付的幂等性
+		
+		$.ajax({
+			type:"post",
+			url:"http://www.lizexing.cn/wechat/wechatBack/getWechatOrderStatus",
+			data:{"goodsId":"123"},
+			success:function(data){
+				//查询结果是未支付状态
+				//查询结果是已支付状态，那就在这个页面停留着就行了
+				//数据库一点数据也没查到，说明这个用户是第一次购买这个商品，也在这个页面停留着，等待用户支付就可以了
+				if("有订单，跳转到待支付页面"){
+					window.location.href="http://www.lizexing.cn/wechat/rePay.html?goodsId="+goodsId;
+				}
+				
+			}
+		});
+	});
+	
+	//开始下订单，调用微信支付接口的统一下单操作
+	function buy(){
+		$.ajax({
+			type:"post",
+			url:"http://www.lizexing.cn/wechat/wechatPay/wechatPay",
+			data:{"id":"123","goodsCont":2},//goodsCont购买的商品数量
+			success:function(data){
+				var result = eval(data);
+				console.log(result.appId);
+				onBridgeReady(result.appId,result.timeStamp,result.nonceStr,result.packageVal,result.paySign);
+			}
+		});
+	}
+	
+	function onBridgeReady(appId,timeStamp,nonceStr,packageVal,paySign){
+		
+		//WeixinJSBridge这个方法不在自己的js里，自己不需要管理，
+		//不需要自己引入，那怎么会用到这个js方法了呢
+		//这个js方法在微信手机端浏览器里面藏着呢，电脑微信客户端都调用不了支付
+		   WeixinJSBridge.invoke(
+		       'getBrandWCPayRequest', {
+		    	   "appId":appId,     //公众号名称，由商户传入     
+		           "timeStamp":timeStamp,         //时间戳，自1970年以来的秒数     
+		           "nonceStr":nonceStr, //随机串     
+		           "package":packageVal,     
+		           "signType":"MD5",         //微信签名方式：     
+		           "paySign":paySign //微信签名 
+		       },
+		       function(res){     
+		    	   // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
+		           if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+		        	   //跳转到订单页面，跳转到已支付，待发货页面
+		        	   
+		           }else{
+		        	   //不管按的是返回或是支付失败等原因，都让它跳转到待支付页面
+		        	   
+		           }     
+		       }
+		   ); 
+		}
+		if (typeof WeixinJSBridge == "undefined"){
+		   if( document.addEventListener ){
+		       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+		   }else if (document.attachEvent){
+		       document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+		       document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+		   }
+		}else{
+		   onBridgeReady();
+		} 
+
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+<body>
+
+<script type="text/javascript">
+	
+	$(function(){
+		//接收url传递过来status是什么，是1、2或3
+		//search = ?status=1
+		var search = window.location.search;
+		var statusArray = search.split("status=");
+		var status = statusArray[1];
+		if(status==1){
+			//跳转到个人中心
+			window.location.href="http://www.lizexing.cn/wechat/list.html";
+		}
+		if(status==2){
+			//跳转到商城首页
+		}
+		if(status==3){
+			//跳转到学习社区里
+		}
+	})
+	
+</script>
+
+</body>
+</html>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- log4j2使用说明： 使用方式如下：
+      private static final Logger logger = LogManager.getLogger(实际类名.class); 
+      2、日志说明： 
+           （1）请根据实际情况配置各项参数 
+            （2）需要注意日志文件备份数和日志文件大小，注意预留目录空间 
+	（3）实际部署的时候backupFilePatch变量需要修改成linux目录 -->
+<configuration status="info">
+
+	<!-- 配置全局变量 -->
+	<Properties>
+		<Property name="fileName">wechat.log</Property>
+		<Property name="backupFilePatch">E:\tools\logs\wechat\</Property>
+	</Properties>
+	
+	<!--先定义所有的appender -->
+	<appenders>
+	
+	
+		<!--Error级别 -->
+		<RollingFile name="RollingFileError" fileName="${backupFilePatch}${fileName}"
+			filePattern="${backupFilePatch}$${date:yyyy-MM}/student-%d{yyyyMMddHHmmssSSS}.log.gz">
+			
+			<PatternLayout
+				pattern="%d{yyyy.MM.dd 'at' HH:mm:ss.SSS z}[%t] %-5level %class{36} %L %M - %msg%xEx%n" />
+			<!-- 日志文件大小 -->
+			<SizeBasedTriggeringPolicy size="20MB" />
+			<!-- 最多保留文件数 -->
+			<DefaultRolloverStrategy max="20" />
+			<!-- 配置拦截器 只显示error级别以上的信息 -->
+			<Filters>
+				<ThresholdFilter level="error" onMatch="ACCEPT"
+					onMismatch="DENY" />
+			</Filters>
+		</RollingFile>
+	
+		<!--这个输出控制台的配置 -->
+		<Console name="Console" target="SYSTEM_OUT">
+			<!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch） -->
+			<ThresholdFilter level="info" onMatch="ACCEPT"
+				onMismatch="DENY" />
+			<!--这个都知道是输出日志的格式 -->
+			<PatternLayout
+				pattern="%d{HH:mm:ss.SSS} [%t]  %-5level %class{36} %L %M - %msg%xEx%n" />
+		</Console>
+		
+		
+		<!--这个会打印出所有的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档 -->
+		<RollingFile name="RollingFile" fileName="${backupFilePatch}${fileName}"
+			filePattern="${backupFilePatch}$${date:yyyy-MM}/app-%d{yyyyMMddHHmmssSSS}.log.gz">
+			<PatternLayout
+				pattern="%d{yyyy.MM.dd 'at' HH:mm:ss.SSS z}[%t] %-5level %class{36} %L %M - %msg%xEx%n" />
+			<!-- 日志文件大小 -->
+			<SizeBasedTriggeringPolicy size="20MB" />
+			<!-- 最多保留文件数 -->
+			<DefaultRolloverStrategy max="40" />
+		</RollingFile>
+		
+		
+		<!--Info级别 -->
+		<RollingFile name="RollingFileInfo" fileName="${backupFilePatch}efilmInfo.log"
+			filePattern="${backupFilePatch}$${date:yyyy-MM}/app-%d{yyyyMMddHHmmssSSS}.log.gz">
+			<PatternLayout
+				pattern="%d{yyyy.MM.dd 'at' HH:mm:ss.SSS z}[%t] %-5level %class{36} %L %M - %msg%xEx%n" />
+			<!-- 日志文件大小 -->
+			<SizeBasedTriggeringPolicy size="20MB" />
+			<!-- 最多保留文件数 -->
+			<DefaultRolloverStrategy max="20" />
+			<!-- 配置拦截器 只显示info级别以上的信息 -->
+			<Filters>
+				<ThresholdFilter level="info" onMatch="ACCEPT"
+					onMismatch="DENY" />
+			</Filters>
+		</RollingFile>
+		
+		
+		<!--Warn级别 -->
+		<RollingFile name="RollingFileWarn" fileName="${backupFilePatch}efilmWarn.log"
+			filePattern="${backupFilePatch}$${date:yyyy-MM}/app-%d{yyyyMMddHHmmssSSS}.log.gz">
+			<PatternLayout
+				pattern="%d{yyyy.MM.dd 'at' HH:mm:ss.SSS z}[%t] %-5level %class{36} %L %M - %msg%xEx%n" />
+			<!-- 日志文件大小 -->
+			<SizeBasedTriggeringPolicy size="20MB" />
+			<!-- 最多保留文件数 -->
+			<DefaultRolloverStrategy max="20" />
+			<!-- 配置拦截器 只显示error级别以上的信息 -->
+			<Filters>
+				<ThresholdFilter level="warn" onMatch="ACCEPT"
+					onMismatch="DENY" />
+			</Filters>
+		</RollingFile>
+		
+		
+		<!--fatal级别 -->
+		<RollingFile name="RollingFilefatal" fileName="${backupFilePatch}efilmfatal.log"
+			filePattern="${backupFilePatch}$${date:yyyy-MM}/fatal-%d{yyyyMMddHHmmssSSS}.log.gz">
+			<PatternLayout
+				pattern="%d{yyyy.MM.dd 'at' HH:mm:ss.SSS z}[%t] %-5level %class{36} %L %M - %msg%xEx%n" />
+			<!-- 日志文件大小 -->
+			<SizeBasedTriggeringPolicy size="20MB" />
+			<!-- 最多保留文件数 -->
+			<DefaultRolloverStrategy max="20" />
+			<!-- 配置拦截器 只显示error级别以上的信息 -->
+			<Filters>
+				<ThresholdFilter level="fatal" onMatch="ACCEPT"
+					onMismatch="DENY" />
+			</Filters>
+		</RollingFile>
+		
+	</appenders>
+	
+	
+	
+	
+	
+	<loggers>
+		<!-- 日志的总开关 -->
+		<!--建立一个默认的root的logger，需要在root的level中指定输出的级别， -->
+		<root level="info">
+			<appender-ref ref="RollingFile" />
+			<appender-ref ref="RollingFileInfo" />
+			<appender-ref ref="RollingFileError" />
+			<appender-ref ref="RollingFileWarn" />
+			<appender-ref ref="Console" />
+			<appender-ref ref="RollingFilefatal" />
+		</root>
+	</loggers>
+	
+	
+</configuration>
