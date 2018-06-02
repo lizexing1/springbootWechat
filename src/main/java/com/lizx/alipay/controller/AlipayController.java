@@ -39,7 +39,7 @@ public class AlipayController {
 	    json.put("total_amount", "88.88");
 	    json.put("subject", "Iphone6 16G");
 	    json.put("body", "Iphone6 16G");
-	    
+	    System.out.println();
 	    alipayRequest.setBizContent(json.toString());//填充业务参数
 	    String form="";
 	    try {
